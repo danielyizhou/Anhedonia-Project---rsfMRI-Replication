@@ -1,10 +1,8 @@
 library(gamm4)
 library(Rcmdr) #to edit table data
 
-#something stupid 
 #read in the data file
 NeuroCog_rsfMRIData <- read.csv("Neurocognition Battery and rsfMRI.csv", header = TRUE)
-rsfMRIData_missingAnhRm <- read.csv("Anhedonia Analysis Compiled Data Part 1_missing_Anhedonia_removed.csv", header = TRUE)
 new_rsfMRIData <- read.csv("Anhedonia Analysis Compiled Data Part 1 - stnvols outliers.csv", header = TRUE)
 
 #automatically compute z-score
