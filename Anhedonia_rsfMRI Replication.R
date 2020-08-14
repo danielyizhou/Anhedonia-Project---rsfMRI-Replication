@@ -1,5 +1,5 @@
 library(gamm4)
-library(Rcmdr) #to edit table data
+library(Rcmdr) #to edit table dataa
 
 #read in the data file
 NeuroCog_rsfMRIData <- read.csv("Neurocognition Battery and rsfMRI.csv", header = TRUE)
