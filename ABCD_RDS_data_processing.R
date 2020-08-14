@@ -1,4 +1,43 @@
-ABCD_data <- readRDS("nda2.0.1.Rds")
+ABCD_data <- readRDS("nda2.0.1.Rds")  #reading in ABCD 2.0.1 data
 
-myvars <- c("subjectid")
-subsetABCDdata <- ABCD_data[myvars]
+myvars <- c("subjectid",              #making a list of wanted variables
+            "eventname",
+            "interview_age",
+            "sex",
+            "race_ethnicity",
+            "rel_family_id",
+            "acs_raked_propensity_score",
+            "ksads_1_5_t",
+            "ksads_1_6_t",
+            "rsfmri_cor_network.gordon_subthresh.nvols",
+            "rsfmri_cor_network.gordon_retrosplenialtemporal_network.gordon_retrosplenialtemporal",
+            "rsfmri_cor_network.gordon_cingulooperc_network.gordon_cingulooperc",
+            "rsfmri_cor_network.gordon_default_network.gordon_dorsalattn",
+            "rsfmri_cor_network.gordon_subcort.aseg_subthresh.nvols",
+            "rsfmri_cor_network.gordon_cingulooperc_subcort.aseg_brain.stem",
+            "rsfmri_cor_network.gordon_cinguloparietal_subcort.aseg_brain.stem",
+            "rsfmri_cor_network.gordon_cinguloparietal_subcort.aseg_pallidum.rh",
+            "rsfmri_cor_network.gordon_dorsalattn_subcort.aseg_hippocampus.lh",
+            "rsfmri_cor_network.gordon_retrosplenialtemporal_subcort.aseg_cerebellum.cortex.rh",
+            "rsfmri_cor_network.gordon_smhand_subcort.aseg_brain.stem",
+            "rsfmri_cor_network.gordon_smhand_subcort.aseg_hippocampus.rh",
+            "rsfmri_cor_network.gordon_salience_subcort.aseg_ventraldc.lh",
+            "mri_info_device.serial.number",
+            "mri_info_manufacturer",
+            "demo_comb_income_p_l",
+            "demo_prnt_ed_p_l",
+            "demo_prtnr_ed_p_l",
+            "demo_prnt_empl_p_l",
+            "demo_prtnr_empl_p_l",
+            "demo_prnt_prtnr_l",
+            "demo_roster_p_l",
+            "demo_fam_exp1_p_l",
+            "demo_fam_exp2_p_l",
+            "demo_fam_exp3_p_l",
+            "demo_fam_exp4_p_l",
+            "demo_fam_exp5_p_l",
+            "demo_fam_exp6_p_l",
+            "demo_fam_exp7_p_l")
+
+subsetABCDdata <- ABCD_data[myvars]   #subsetting wanted variables from the complete ABCD 2.0.1 dataset
+write.csv(subsetABCDdata, file = "subsetABCDdata.csv")  #csv output of table with specified variables
