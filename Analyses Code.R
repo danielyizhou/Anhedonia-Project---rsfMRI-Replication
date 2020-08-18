@@ -1,6 +1,8 @@
 #run GAMM4 analysis 
 library(gamm4)
 
+# Add possible source() commands required to make this work
+
 #describeData = rsfMRIData$RetrosplenialTemporal, brainNetwork = "RetrosplenialTemporal"
 autoGAMM4 <- function(describeData, brainNetwork){  
   res1 <- gamm4(as.formula(paste(brainNetwork, "~ Anhedonia + interview_age + sex + White_ethnicity + Black_ethnicity + Hispanic_ethnicity + Asian_ethnicity + Other_ethnicity")),
