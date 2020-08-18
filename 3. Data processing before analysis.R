@@ -13,8 +13,26 @@ data2 <- data1[-which(data1$mri_info_manufacturer == "Philips Medical Systems"),
 #select wanted variables
 data3 <- data2[,c(2:8, 40, 11:24)]
 
-#next steps include removing low quality subjects 
+#dummy code race/ethnicity factor
+library(plyr)
+data3$Black_ethnicity <- revalue(data3$race_ethnicity, c("White" = "Non-Black", "Asian" = "Non-Black", "Hispanic" = "Non-Black", "Other" = "Non-Black"))
+data3$Hispanic_ethnicity <- revalue(data3$race_ethnicity, c("White" = "Non-Hispanic", "Asian" = "Non-Hispanic", "Other" = "Non-Hispanic", "Black" = "Non-Hispanic"))
+data3$Asian_ethnicity <- revalue(data3$race_ethnicity, c("White" = "Non-Asian", "Hispanic" = "Non-Asian", "Other" = "Non-Asian", "Black" = "Non-Asian"))
+data3$Other_ethnicity <- revalue(data3$race_ethnicity, c("White" = "Non-Other", "Hispanic" = "Non-Other", "Asian" = "Non-Other", "Black" = "Non-Other"))
+data3$White_ethnicity <- revalue(data3$race_ethnicity, c("Other" = "Non-White", "Hispanic" = "Non-White", "Asian" = "Non-White", "Black" = "Non-White"))
+
+#remove subjects with low quality scans: filter out subjects with <500 frames with FD < 0.2 
+data4 <- data3[which(data3$rsfmri_cor_network.gordon_subthresh.nvols >= 500), ]
+
+#modifying variable types
+data4$rel_family_id <- as.factor(data4$rel_family_id)
+data4$Anhedonia <- as.factor(data4$Anhedonia)
+data4$Anhedonia <- revalue(data4$Anhedonia, c("0" = "No-Anhdeonia", "1" = "Anhedonia"))
+
 #run GAMM4 analysis again 
 
-
-table(data2$demo_fam_exp5_p_l)  #to get the number of subjects in each of the levels of a factor
+#summary functions
+table(data4$White_ethnicity)  #to get the number of subjects in each of the levels of a factor
+summary(data4$White_ethnicity)
+str(data4$White_ethnicity)
+levels(data4$Anhedonia)
