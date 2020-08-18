@@ -15,3 +15,5 @@ autoGAMM4 <- function(describeData, brainNetwork){
 }
 
 str(data4$Asian_ethnicity)
+
+library(OpenMx) 
