@@ -19,7 +19,6 @@ data3$Black_ethnicity <- revalue(data3$race_ethnicity, c("White" = "Non-Black", 
 data3$Hispanic_ethnicity <- revalue(data3$race_ethnicity, c("White" = "Non-Hispanic", "Asian" = "Non-Hispanic", "Other" = "Non-Hispanic", "Black" = "Non-Hispanic"))
 data3$Asian_ethnicity <- revalue(data3$race_ethnicity, c("White" = "Non-Asian", "Hispanic" = "Non-Asian", "Other" = "Non-Asian", "Black" = "Non-Asian"))
 data3$Other_ethnicity <- revalue(data3$race_ethnicity, c("White" = "Non-Other", "Hispanic" = "Non-Other", "Asian" = "Non-Other", "Black" = "Non-Other"))
-data3$White_ethnicity <- revalue(data3$race_ethnicity, c("Other" = "Non-White", "Hispanic" = "Non-White", "Asian" = "Non-White", "Black" = "Non-White"))
 
 #remove subjects with low quality scans: filter out subjects with <500 frames with FD < 0.2 
 data4 <- data3[which(data3$rsfmri_cor_network.gordon_subthresh.nvols >= 500), ]
