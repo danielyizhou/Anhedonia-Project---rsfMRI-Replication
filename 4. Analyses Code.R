@@ -1,34 +1,65 @@
-#source the data processing code to create the datasets you will be using in this analysis code (loads them to environment)
+#source the Data Processing code to create the datasets you will be using with this analysis code (loads them into the environment)
 source("3. Data processing before analysis.R")
+data5 <- subset(data4, select = -c(rsfmri_cor_network.gordon_subcort.aseg_subthresh.nvols)) #remove redundant data column 
 
 #load gamm4 package 
 library(gamm4)
 
-#automated GAMM4 function.Parameters:
+#automated gamm4 function. Input parameters:
+  #describeData, an entire column from a dataframe. For example: data5$rsfmri_cor_network.gordon_cingulooperc_subcort.aseg_brain.stem 
+  #brainNetwork, the name of a column from a dataframe. For example: "rsfmri_cor_network.gordon_cingulooperc_subcort.aseg_brain.stem"
 autoGAMM4 <- function(describeData, brainNetwork){  
+  #running the model and printout of summary 
   res1 <- gamm4(as.formula(paste(brainNetwork, "~ Anhedonia + interview_age + sex + Black_ethnicity + Hispanic_ethnicity + Asian_ethnicity + Other_ethnicity")),
                 random = ~(1|rel_family_id) + (1|mri_info_device.serial.number),
-                weights = data4$acs_raked_propensity_score,
-                data = data4)
+                weights = data5$acs_raked_propensity_score,
+                data = data5)
   print(summary(res1$gam))
+  
+  #extraction of estimates and statistics 
+  summary_variable <- summary(res1$gam)
+  summary_variable$formula[2] #gets column name (rsfMRI network) 
+    string_colname <- as.character(summary_variable$formula[2]) #converts it to a string
+    colname_Vector <- c(rep(string_colname, 8)) #make a vector to repeat it 8 times
+  
+  my_df1 <- data.frame("Parameters" = row.names(my_df1),
+                        "rsfMRI Network" = colname_Vector, 
+                        "Estimate" = summary_variable$p.coeff, 
+                        "Std. Error" = summary_variable$se,
+                        "t value" = summary_variable$p.t, 
+                        "p-value" = summary_variable$p.pv)
+    
+  my_df1$sig_level <- ifelse(my_df1$p.value <= 0.05 & my_df1$p.value > 0.01, "*",
+                             ifelse(my_df1$p.value <= 0.01 & my_df1$p.value > 0.001, "**",
+                                    ifelse(my_df1$p.value <=0.001, "***", "not significant")))
+  return(my_df1)
+  
+  #quality check and pritnout of plots, summary statistics 
   #par(mfrow = c(2,2))       #make 2 by 2 window for plots
   #gam.check(res1$gam)  #check's residuals of analysis
   #library(psych)
   #print(describe.by(describeData, group = data4$Anhedonia))
 }
-  #describeData, an entire column from a dataframe. For example: data4$rsfmri_cor_network.gordon_cingulooperc_subcort.aseg_brain.stem 
-  #brainNetwork, the name of a column from a dataframe. For example: "rsfmri_cor_network.gordon_cingulooperc_subcort.aseg_brain.stem"
 
-#for loop to go through many columns in a dataframe at a time. Next, try to extract model parameters.
-x <- c(10,11,12)
-for (val in x){
-  autoGAMM4(data4[,val], colnames(data4[val]))
+#for-loop to analyze and print results from several rsfMRI connectivity networks. 
+rsfMRI_indices <- c(10:20)
+output_df <- NULL 
+
+for (index in rsfMRI_indices){
+  temp_dataframe <- autoGAMM4(data5[,index], colnames(data5[index]))
+  output_df <- rbind(output_df, temp_dataframe)
 }
+
+#print out results
+write.csv(output_df, file = "rsfMRI_output_df.csv")
 
 #investigate random effect and whether a nested structure would be more appropriate
 
 #make sure you are using the "weights" paramter correctly 
 
+#remove IQR outliers for each analysis and re-do analysis
+
+#merge and printout a summary of QC plots 
 
 # Part 1 ------------------------------------------------------------------
 
@@ -38,8 +69,8 @@ res1 <- gamm4(data4$rsfmri_cor_network.gordon_cingulooperc_network.gordon_cingul
               random = ~(1|rel_family_id) + (1|mri_info_device.serial.number),
               weights = data4$acs_raked_propensity_score,
               data = data4)
-par(mfrow = c(2,2))       #make 2 by 2 window for plots
-gam.check(res1$gam)  #check's residuals of analysis
+#par(mfrow = c(2,2))       #make 2 by 2 window for plots
+#gam.check(res1$gam)  #check's residuals of analysis
 
 summary_variable <- summary(res1$gam)
 summary_variable
