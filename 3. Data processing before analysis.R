@@ -28,7 +28,10 @@ data4$rel_family_id <- as.factor(data4$rel_family_id)
 data4$Anhedonia <- as.factor(data4$Anhedonia)
 data4$Anhedonia <- revalue(data4$Anhedonia, c("0" = "No-Anhdeonia", "1" = "Anhedonia"))
 
-#run GAMM4 analysis again 
+#remove unecessary column
+data4$rsfmri_cor_network.gordon_subcort.aseg_subthresh.nvols <- NULL
+
+#run GAMM4 analysis again (see analyses code)
 
 #summary functions
 table(data4$White_ethnicity)  #to get the number of subjects in each of the levels of a factor
