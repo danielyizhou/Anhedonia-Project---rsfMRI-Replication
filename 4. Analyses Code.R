@@ -7,13 +7,16 @@ library(gamm4)
 #automated gamm4 function. Input parameters:
   #describeData, an entire column from a dataframe. For example: data5$rsfmri_cor_network.gordon_cingulooperc_subcort.aseg_brain.stem 
   #brainNetwork, the name of a column from a dataframe. For example: "rsfmri_cor_network.gordon_cingulooperc_subcort.aseg_brain.stem"
-autoGAMM4 <- function(describeData, brainNetwork){  
+  #datafile, the dataframe to be used 
+autoGAMM4 <- function(describeData, brainNetwork, datafile){  
   #running the model and printout of summary 
   res1 <- gamm4(as.formula(paste(brainNetwork, "~ Anhedonia + interview_age + sex + Black_ethnicity + Hispanic_ethnicity + Asian_ethnicity + Other_ethnicity")),
                 random = ~(1|rel_family_id) + (1|mri_info_device.serial.number),
-                weights = data4$acs_raked_propensity_score, #for some reason, it has to call on a dataframe external to the function.
-                data = data4)
+                weights = temp_noOutliers_df$acs_raked_propensity_score, #for some reason, it has to call on a dataframe external to the function. This is created in the "for loop" below.
+                data = datafile)
+  
   print(summary(res1$gam))
+  print(length(temp_noOutliers_df$acs_raked_propensity_score)) #check that the dataframe changes length when outliers are removed
   
   #extraction of estimates and statistics 
   summary_variable <- summary(res1$gam)
@@ -41,13 +44,17 @@ autoGAMM4 <- function(describeData, brainNetwork){
 }
 
 #for-loop to analyze and print results from several rsfMRI connectivity networks. 
-rsfMRI_indices <- c(10:20)
-output_df <- NULL 
+rsfMRI_indices <- c(10,11,12) #create indices representing columns from a dataframe
+output_df <- NULL #create "external" updatable output object
 
 for (index in rsfMRI_indices){
-  temp_dataframe <- autoGAMM4(data4[,index], colnames(data4[index]))
+  temp_noOutliers_df <- removeOutliers(colnames(data4)[index], data4) #this is the dataframe with outliers removed that will be used in the GAMM4 function. Critical for the "weights" argument.
+  temp_dataframe <- autoGAMM4(temp_noOutliers_df[,index], colnames(temp_noOutliers_df[index]), temp_noOutliers_df)
   output_df <- rbind(output_df, temp_dataframe)
 }
+
+######################test autogamm4 by redoing original analysis without removal of outliers, but with new code for "weights". Make sure 
+######################its doing what you want it to do. 
 
 #print out results
 write.csv(output_df, file = "rsfMRI_output_df.csv")
@@ -58,37 +65,14 @@ write.csv(output_df, file = "rsfMRI_output_df.csv")
 
 #remove IQR outliers for each analysis and re-do analysis-------------------------------------------------------------------------------
 
-rsfMRI_indices <- c(10)
-noOutliers_vector <- NULL
-
-for (index in rsfMRI_indices){
-  temp_noOutliers_df <- removeOutliers(colnames(data4)[index], data4)
-  #noOutliers_vector <- c(assign(paste(as.character(colnames(data4)[index]), "_noOutliers"), temp_noOutliers_df))
-    #need to make a list or vector of data-frames
-    #you can then adjust the gamm4 code to go through the list and perform gamm
-}
-
 removeOutliers <- function (rsfMRI_Network, datafile){ 
   outliers <- boxplot(datafile[rsfMRI_Network], plot = FALSE)$out #extract outliers
-  colIndex <- which(colnames(datafile) == rsfMRI_Network)#get index for rsfMRI column of interest
+  colIndex <- which(colnames(datafile) == rsfMRI_Network) #get index for rsfMRI column of interest
   rsfMRI_noOutliers <- datafile
   rsfMRI_noOutliers <- rsfMRI_noOutliers[-which(datafile[,colIndex] %in% outliers),]
+  return(rsfMRI_noOutliers)
 }
 
-return(assign(paste(rsfMRI_Network, "_noOutliers"), rsfMRI_noOutliers))
-assign(paste(as.character(colnames(data4)[10]), "_noOutliers"), temp_noOutliers_df)
-
-
-
-outliers <- boxplot(data4$rsfmri_cor_network.gordon_retrosplenialtemporal_network.gordon_retrosplenialtemporal, plot = FALSE)$out
-colIndex <- which(colnames(data4) == "rsfmri_cor_network.gordon_retrosplenialtemporal_network.gordon_retrosplenialtemporal")
-rsfMRI_noOutliers <- data4
-rsfMRI_noOutliers <- rsfMRI_noOutliers[-which(data4[,colIndex] %in% outliers),]
-
-assign(paste("rsfMRI_noOultiers", "retrosplenialTemporal", sep = "_"), rsfMRI_noOutliers)
-
-length(outliers)
-which(data4$rsfmri_cor_network.gordon_retrosplenialtemporal_network.gordon_retrosplenialtemporal)
 #merge and printout a summary of QC plots 
 
 # Part 1 ------------------------------------------------------------------
@@ -171,13 +155,10 @@ df_merge <- merge(my_df1, my_df2, all = TRUE, sort = FALSE)
 
 weights1 = NULL
 autoGAMM4_edit <- function(describeData, brainNetwork, datafile){  
-  #running the model and printout of summary 
-  weights1 <- data4$acs_raked_propensity_score
-  print(weights1)
-  weights2 <- datafile$acs_raked_propensity_score
+
   res1 <- gamm4(as.formula(paste(brainNetwork, "~ Anhedonia + interview_age + sex + Black_ethnicity + Hispanic_ethnicity + Asian_ethnicity + Other_ethnicity")),
                 random = ~(1|rel_family_id) + (1|mri_info_device.serial.number),
-                weights = weights1,
+                #weights = weights1,
                 data = datafile)
   print(summary(res1$gam))
 }
