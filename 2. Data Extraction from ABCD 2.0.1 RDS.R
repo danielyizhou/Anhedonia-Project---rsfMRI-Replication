@@ -37,7 +37,11 @@ myvars <- c("subjectid",              #making a list of wanted variables
             "demo_fam_exp4_p_l",
             "demo_fam_exp5_p_l",
             "demo_fam_exp6_p_l",
-            "demo_fam_exp7_p_l")
+            "demo_fam_exp7_p_l",
+            "PI_HAT",
+            "rel_group_id",
+            "rel_relationship",
+            "rel_same_sex")
 
 subsetABCDdata <- ABCD_data[myvars]   #subsetting wanted variables from the complete ABCD 2.0.1 dataset
 write.csv(subsetABCDdata, file = "subsetABCDdata.csv")  #csv output of table with specified variables

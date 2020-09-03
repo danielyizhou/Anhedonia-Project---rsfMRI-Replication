@@ -44,7 +44,7 @@ autoGAMM4 <- function(describeData, brainNetwork, datafile){
 }
 
 #for-loop to analyze and print results from several rsfMRI connectivity networks. 
-rsfMRI_indices <- c(10,11,12) #create indices representing columns from a dataframe
+rsfMRI_indices <- c(10:20) #create indices representing columns from a dataframe
 output_df <- NULL #create "external" updatable output object
 
 for (index in rsfMRI_indices){
@@ -57,7 +57,7 @@ for (index in rsfMRI_indices){
 ######################its doing what you want it to do. 
 
 #print out results
-write.csv(output_df, file = "rsfMRI_output_df.csv")
+write.csv(output_df, file = "rsfMRI_noOutliers_output_df.csv")
 
 #investigate random effect and whether a nested structure would be more appropriate
 

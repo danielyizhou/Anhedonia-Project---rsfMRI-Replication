@@ -1,4 +1,4 @@
-data <- read.csv(file = "subsetABCDdata.csv", header = TRUE)
+data <- read.csv(file = "subsetABCDdata_PI_HAT.csv", header = TRUE)
 
 #extract only baseline year 1 data
 data1 <- data[which(data$eventname == "baseline_year_1_arm_1"),] 
@@ -11,7 +11,7 @@ data1$Anhedonia[data1$Anhedonia==2] <- 1
 data2 <- data1[-which(data1$mri_info_manufacturer == "Philips Medical Systems"),]
 
 #select wanted variables
-data3 <- data2[,c(2:8, 40, 11:24)]
+data3 <- data2[,c(2:6, 8, 44, 11:24, 40:43, 7)]
 
 #dummy code race/ethnicity factor
 library(plyr)
@@ -31,10 +31,7 @@ data4$Anhedonia <- revalue(data4$Anhedonia, c("0" = "No-Anhdeonia", "1" = "Anhed
 #remove unecessary column
 data4$rsfmri_cor_network.gordon_subcort.aseg_subthresh.nvols <- NULL
 
-#run GAMM4 analysis again (see analyses code)
 
-#summary functions
-table(data4$White_ethnicity)  #to get the number of subjects in each of the levels of a factor
-summary(data4$White_ethnicity)
-str(data4$White_ethnicity)
-levels(data4$Anhedonia)
+# Determining Twin Zygosity -----------------------------------------------
+
+sorted_family <- data4[order(data$rel_family_id),]
