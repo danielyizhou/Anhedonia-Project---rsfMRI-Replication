@@ -34,4 +34,20 @@ data4$rsfmri_cor_network.gordon_subcort.aseg_subthresh.nvols <- NULL
 
 # Determining Twin Zygosity -----------------------------------------------
 
-sorted_family <- data4[order(data$rel_family_id),]
+#extract all potential twins (filter out normal siblings and triplets)
+sorted_family <- data4[order(data4$rel_family_id),] #sorts dataset by family_ID
+potential_twins <- sorted_family[!(is.na(sorted_family$PI_HAT)),] #extracts all subjects with non-NA PI_HAT values. This also removes normal siblings and triplets.
+
+#identify pairs of twins and "single" twins
+potential_twins$twin_1_ID <- duplicated(potential_twins$rel_family_id, fromLast = TRUE)
+potential_twins$twin_2_ID <- duplicated(potential_twins$rel_family_id)
+potential_twins$twin_ID <- ifelse (potential_twins$twin_1_ID == TRUE, "twin1",
+                              ifelse(potential_twins$twin_2_ID == TRUE, "twin2", "single_twin"))
+table(potential_twins$twin_ID) #there are 540 twin pairs and 142 "single" twins.
+
+#extract twin-pairs only 
+twin_pairs_only <- potential_twins[-which(potential_twins$twin_ID == "single_twin"),]
+
+#assigning zygosity 
+twin_pairs_only$zygosity <- ifelse(twin_pairs_only$PI_HAT > 0.7, "MZ", "DZ")
+table(twin_pairs_only$zygosity)
