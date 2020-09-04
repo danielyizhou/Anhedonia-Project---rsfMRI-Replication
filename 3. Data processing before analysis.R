@@ -56,6 +56,6 @@ table(twin_pairs_only$zygosity)
 library(dplyr)
 twin1_data <- filter(twin_pairs_only, twin_ID == "twin1") #make table with just twin 1 data
 twin2_data <- filter(twin_pairs_only, twin_ID == "twin2") #make table with just twin 2 data
-twinData <- left_join(twin1_data, twin2_data, by = "rel_family_id", suffix = c("_t1", "_t2")) #joining the datasets by rel_family_id 
-twinData <- twinData[,order(colnames(twinData))] #sorting by columns so the same variables across twins are side-by-side
+rsfMRI_twinData <- left_join(twin1_data, twin2_data, by = "rel_family_id", suffix = c("_t1", "_t2")) #joining the datasets by rel_family_id 
+rsfMRI_twinData <- rsfMRI_twinData[,order(colnames(rsfMRI_twinData))] #sorting by columns so the same variables across twins are side-by-side
 write.csv(twinData, file = "Anhedonia_rsfMRI_twinData.csv")
