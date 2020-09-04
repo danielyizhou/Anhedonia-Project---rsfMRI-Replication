@@ -44,7 +44,7 @@ autoGAMM4 <- function(describeData, brainNetwork, datafile){
 }
 
 #for-loop to analyze and print results from several rsfMRI connectivity networks. 
-rsfMRI_indices <- c(10:20) #create indices representing columns from a dataframe
+rsfMRI_indices <- c(9:19) #create indices representing columns from a dataframe
 output_df <- NULL #create "external" updatable output object
 
 for (index in rsfMRI_indices){

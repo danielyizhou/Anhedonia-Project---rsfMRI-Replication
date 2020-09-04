@@ -51,3 +51,11 @@ twin_pairs_only <- potential_twins[-which(potential_twins$twin_ID == "single_twi
 #assigning zygosity 
 twin_pairs_only$zygosity <- ifelse(twin_pairs_only$PI_HAT > 0.7, "MZ", "DZ")
 table(twin_pairs_only$zygosity)
+
+#re-formatting twinData for OpenMX
+library(dplyr)
+twin1_data <- filter(twin_pairs_only, twin_ID == "twin1") #make table with just twin 1 data
+twin2_data <- filter(twin_pairs_only, twin_ID == "twin2") #make table with just twin 2 data
+twinData <- left_join(twin1_data, twin2_data, by = "rel_family_id", suffix = c("_t1", "_t2")) #joining the datasets by rel_family_id 
+twinData <- twinData[,order(colnames(twinData))] #sorting by columns so the same variables across twins are side-by-side
+write.csv(twinData, file = "Anhedonia_rsfMRI_twinData.csv")
